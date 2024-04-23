@@ -4,6 +4,6 @@ function Get-LastMOTDDateFile {
     Param()
 
     $dateFile = "$(Get-Date -Format FileDate).txt"
-    [string]$filePath = Join-Path $env:Temp $dateFile
+    [string]$filePath = Join-Path $env:Tmp $dateFile
     return $filePath
 }
