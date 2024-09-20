@@ -5,6 +5,7 @@
     PSDependOptions = @{
         Target = 'CurrentUser'
     }
+    # Dev Dependancies
     'Pester' = @{
         Version = '5.5.0'
         Parameters = @{
@@ -22,5 +23,9 @@
     }
     'PSScriptAnalyzer' = @{
         Version = '1.19.0'
+    }
+    # Module Dependancies
+    'Configuration' = @{
+        Version = '1.6.0'
     }
 }
