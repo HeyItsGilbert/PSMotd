@@ -1,4 +1,5 @@
 function Set-MOTDConfig {
+    [CmdletBinding(SupportsShouldProcess = $True)]
     param (
         [Parameter()]
         [MotdFrequency]
@@ -17,5 +18,7 @@ function Set-MOTDConfig {
     if ($MOTDScriptBlock) {
         $base.MOTDScriptBlock = $MOTDScriptBlock
     }
-    $base | Export-Configuration -Scope $Scope
+    if ($PSCmdlet.ShouldProcess("PSMOTD configuration", "Save")) {
+        $base | Export-Configuration -Scope $Scope
+    }
 }
