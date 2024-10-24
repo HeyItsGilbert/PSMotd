@@ -10,13 +10,4 @@ foreach ($import in @($classes + $public + $private)) {
     }
 }
 
-# Check if we need to run
-    try {
-        Write-MOTDIfDue
-    } catch {
-        Write-Error "Failed to write MOTD: $_"
-    } finally {
-        Write-LastMOTDDate
-    }
-
 Export-ModuleMember -Function $public.Basename
