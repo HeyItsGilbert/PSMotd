@@ -2,6 +2,7 @@ function Get-MOTD {
     param (
         [switch]
         $Now
+        # [ ] Add support for showing different scopes
     )
     try {
         if ($Now) {

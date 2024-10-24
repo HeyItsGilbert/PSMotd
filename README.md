@@ -33,10 +33,24 @@ function Get-MessageOfTheDay {
   }
 }
 Import-Module PSMotd
+Get-Motd
 ```
 
-By default the MOTD will be print once a day. You can set your environment variable to any of the following: 'Never', 'EverySession', 'Daily', 'Weekly'
+By default the MOTD will be print once a day. You can set your environment
+variable to any of the following: 'Never', 'EverySession', 'Daily', 'Weekly'
+
+## Configuration
+
+Configurations can be seen via `Get-MOTDConfig` and updated with
+`Set-MOTDConfig`.
+
+You can set your MOTD frequency by running:
+
+```powershell
+
+```
 
 ## Shout Out
 
-This is mostly a copy paste of DeadlyDog's tiPS module. It is a way more robust framework, you should go and try it and buy him a bagel.
+This is mostly a copy paste of DeadlyDog's tiPS module. It is a way more robust
+framework, you should go and try it and buy him a bagel.

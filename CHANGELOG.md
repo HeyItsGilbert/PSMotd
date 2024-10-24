@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Support configuration via the PoshCode Configuration module.
+- Allow
 
 ## [0.1.0] Initial Version
 

@@ -1,4 +1,5 @@
 function Get-MOTDConfig {
+    [CmdletBinding()]
     param ()
-    Import-Configuration
+    Import-Configuration -Name 'PSMOTD' -CompanyName 'PSMOTD'
 }

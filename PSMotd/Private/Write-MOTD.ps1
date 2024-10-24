@@ -1,4 +1,4 @@
-function Get-MOTD {
+function Write-MOTD {
     [CmdletBinding()]
     [OutputType([void])]
     Param()

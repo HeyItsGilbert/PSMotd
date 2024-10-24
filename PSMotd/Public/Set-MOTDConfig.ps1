@@ -19,6 +19,6 @@ function Set-MOTDConfig {
         $base.MOTDScriptBlock = $MOTDScriptBlock
     }
     if ($PSCmdlet.ShouldProcess("PSMOTD configuration", "Save")) {
-        $base | Export-Configuration -Scope $Scope
+        $base | Export-Configuration -Scope $Scope -Name 'PSMOTD' -CompanyName 'PSMOTD'
     }
 }
