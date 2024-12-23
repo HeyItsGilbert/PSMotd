@@ -3,7 +3,6 @@ function Write-LastMOTDDate {
     [OutputType([void])]
     Param()
 
-    $config = Get-MOTDConfig
-    $config.LastMOTDWrite = [datetime]::Now
-    $config | Export-Configuration
+    Write-Verbose "Updating the MOTD timestamp to $([datetime]::Now)"
+    @{LastMOTDWrite = [datetime]::Now } | Export-Configuration -Scope 'User' -Name 'PSMOTD' -CompanyName 'PSMOTD'
 }
