@@ -1,4 +1,5 @@
 function Get-MOTD {
+    [CmdletBinding()]
     param (
         [switch]
         $Now
