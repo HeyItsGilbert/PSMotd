@@ -54,6 +54,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Remove persisted `MOTDScriptBlock` configuration support.
 - Remove the resolved local remediation issue tracker files.
 
+## [0.2.1] - 2024-12-22
+
+### Fixed
+
+- Fix the config load sites to explicitly pass company and module name.
+
 ## [0.2.0] - 2024-12-17
 
 ### Added

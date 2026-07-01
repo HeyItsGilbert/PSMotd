@@ -13,7 +13,7 @@ Shows the message of the day when it is due.
 ## SYNTAX
 
 ```
-Get-MOTD [-Now] [<CommonParameters>]
+Get-MOTD [-Now] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -61,6 +61,7 @@ Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
+
 
 
 ### CommonParameters

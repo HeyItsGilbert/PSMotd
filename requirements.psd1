@@ -7,7 +7,7 @@
     }
     # Dev Dependancies
     'Pester' = @{
-        Version = '5.6.1'
+        Version = '5.8.0'
     }
     'psake' = @{
         Version = '4.9.0'
