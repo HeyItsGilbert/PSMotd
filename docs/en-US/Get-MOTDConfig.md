@@ -8,49 +8,41 @@ schema: 2.0.0
 # Get-MOTDConfig
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Gets the persisted PSMotd configuration.
 
 ## SYNTAX
 
 ```
-Get-MOTDConfig [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-MOTDConfig [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Get-MOTDConfig loads the layered PSMotd configuration from the owned
+configuration identity.
+The returned object includes the configured cadence and
+the last timestamp that successfully rendered a message of the day.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+PS C:\> Get-MOTDConfig
+
+Name                           Value
+----                           -----
+MOTDFrequency                  Daily
+LastMOTDWrite                  2024-01-01T00:00:00.0000000
 ```
 
-{{ Add example description here }}
+Returns the current PSMotd cadence configuration.
 
 ## PARAMETERS
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
-
-### None
 
 ## OUTPUTS
 
@@ -58,3 +50,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[Set-MOTDConfig]()
+
+
+

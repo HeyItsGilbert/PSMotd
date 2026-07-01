@@ -1,37 +1,29 @@
+<#
+.SYNOPSIS
+Renders and timestamps the MOTD only when it is due in an interactive session.
+#>
 function Write-MOTDIfDue {
     [CmdletBinding()]
-    [OutputType([bool])]
+    [OutputType([void])]
     Param()
-    # Get the config
     $config = Get-MOTDConfig
     Write-Verbose "Config: $($config | ConvertTo-Json -Compress)"
 
-    # For performance reasons, check if we should never write a tip before doing anything else.
-    if ($config.MOTDFrequency -eq [MotdFrequency]::Never) {
+    [datetime] $lastMotd = Get-LastMOTDWrite
+    if (-not (Test-MotdIsDue -Frequency $config.MOTDFrequency -LastWrite $lastMotd)) {
+        Write-Debug 'Showing a PSMotd is not needed at this time.'
         return
     }
 
-    [DateTime] $lastMotd = Get-LastMOTDWrite
-    [TimeSpan] $timeSinceLastMotd = [DateTime]::Now - $lastMotd
-    [int] $daysSinceLastMotd = $timeSinceLastMotd.Days
-
-    [bool] $shouldShowMotd = $false
-    switch ($config.MOTDFrequency) {
-        ([MotdFrequency]::Never) { $shouldShowMotd = $false; break }
-        ([MotdFrequency]::EverySession) { $shouldShowMotd = $true; break }
-        ([MotdFrequency]::Daily) { $shouldShowMotd = $daysSinceLastMotd -ge 1; break }
-        ([MotdFrequency]::Weekly) { $shouldShowMotd = $daysSinceLastMotd -ge 7; break }
+    if (-not (Test-PowerShellInteractive)) {
+        Write-Verbose 'PSMotd is configured to write a MOTD, but this session is non-interactive. PSMotd will only write automatic tips when it is imported into an interactive PowerShell session. This prevents a tip from being written at unexpected times, such as when the user or an automated process runs PowerShell scripts.'
+        return
     }
 
-    if ($shouldShowMotd) {
-        [bool] $isSessionInteractive = Test-PowerShellInteractive
-        if (-not $isSessionInteractive) {
-            Write-Verbose "PSMotd is configured to write a MOTD, but this session is non-interactive. PSMotd will only write automatic tips when it is imported into an interactive PowerShell session. This prevents a tip from being written at unexpected times, such as when the user or an automated process runs PowerShell scripts."
-            return
-        }
-
-        Write-MOTD
-    } else {
-        Write-Debug "Showing a PSMotd is not needed at this time."
+    Write-MOTD
+    try {
+        Write-LastMOTDDate
+    } catch {
+        Write-Verbose "Failed to persist the MOTD timestamp: $_"
     }
 }

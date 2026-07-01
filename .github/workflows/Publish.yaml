@@ -1,31 +1,26 @@
 name: Publish Module
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 jobs:
   publish:
     runs-on: windows-latest
     steps:
-      # Get the current version
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Install and cache PowerShell modules
         id: psmodulecache
-        uses: potatoqualitee/psmodulecache@v4.5
+        uses: potatoqualitee/psmodulecache@2f5abdff92794d7f761f7da36f7ff295a0ec07f6 # v4.5
         with:
           modules-to-cache: BuildHelpers
       - shell: pwsh
-        # Give an id to the step, so we can reference it later
         id: check_if_versions_bumped
         run: |
           [version]$GalleryVersion = Get-NextNugetPackageVersion -Name PSMotd -ErrorAction Stop
           [version]$GithubVersion = Get-MetaData -Path ./PSMotd/PSMotd.psd1 -PropertyName ModuleVersion -ErrorAction Stop
           $bumped = $GithubVersion -ge $GalleryVersion
-
-          # Set the output named "version_bumped"
-          Write-Host "::set-output name=version_bumped::$bumped"
-
+          "version_bumped=$bumped" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
       - name: Publish to PSGallery
         shell: pwsh
         if: steps.check_if_versions_bumped.outputs.version_bumped == 'True'

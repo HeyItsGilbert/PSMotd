@@ -1,5 +1,4 @@
 @{
     MOTDFrequency = "Daily"
-    MOTDScriptBlock = $Null
-    LastMOTDWrite = "Monday, January 1, 2024 12:00:00 AM"
+    LastMOTDWrite = "2024-01-01T00:00:00.0000000"
 }

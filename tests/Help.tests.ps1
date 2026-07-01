@@ -6,10 +6,79 @@ BeforeDiscovery {
         param ($Params)
         $commonParams = @(
             'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable',
-            'OutBuffer', 'OutVariable', 'PipelineVariable', 'Verbose', 'WarningAction',
-            'WarningVariable', 'Confirm', 'Whatif'
+            'OutBuffer', 'OutVariable', 'PipelineVariable', 'ProgressAction', 'Verbose',
+            'WarningAction', 'WarningVariable', 'Confirm', 'Whatif'
         )
         $params | Where-Object { $_.Name -notin $commonParams } | Sort-Object -Property Name -Unique
+    }
+
+    function global:ConvertTo-HelpText {
+        param ($Value)
+
+        $text = foreach ($item in @($Value)) {
+            if ($null -eq $item) {
+                continue
+            }
+
+            if ($item -is [string]) {
+                $candidate = $item
+            }
+            elseif ($item.PSObject.Properties.Name -contains 'Text') {
+                $candidate = $item.Text
+            }
+            elseif ($item.PSObject.Properties.Name -contains 'Code') {
+                $candidate = $item.Code
+            }
+            else {
+                $candidate = [string]$item
+            }
+
+            if (-not [string]::IsNullOrWhiteSpace($candidate)) {
+                $candidate.Trim()
+            }
+        }
+
+        @($text) -join [Environment]::NewLine
+    }
+
+    function global:Test-MeaningfulHelpText {
+        param (
+            [AllowNull()]
+            [AllowEmptyString()]
+            [string]$Text
+        )
+
+        -not [string]::IsNullOrWhiteSpace($Text) -and $Text -notmatch '\{\{.*\}\}'
+    }
+
+    function global:ConvertTo-HelpLinkReference {
+        param ($NavigationLink)
+
+        if ($null -eq $NavigationLink) {
+            return $null
+        }
+
+        $uriText = ConvertTo-HelpText $NavigationLink.uri
+        $linkText = ConvertTo-HelpText $NavigationLink.linkText
+        $target = if (-not [string]::IsNullOrWhiteSpace($uriText)) {
+            $uriText
+        }
+        else {
+            $linkText
+        }
+
+        if ([string]::IsNullOrWhiteSpace($target)) {
+            return $null
+        }
+
+        $target = $target.Trim()
+        $absoluteUri = $null
+        $isNetworkLink = [uri]::TryCreate($target, [System.UriKind]::Absolute, [ref]$absoluteUri) -and $absoluteUri.Scheme -in @('http', 'https')
+
+        [pscustomobject]@{
+            Kind   = if ($isNetworkLink) { 'Network' } else { 'Local' }
+            Target = $target
+        }
     }
 
     $manifest             = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
@@ -35,6 +104,55 @@ BeforeDiscovery {
     ## To test, restart session.
 }
 
+Describe 'Help test harness' -Tag 'Unit' {
+    It 'filters ProgressAction out of common parameter comparisons' {
+        $params = @(
+            [pscustomobject]@{ Name = 'Name' }
+            [pscustomobject]@{ Name = 'ProgressAction' }
+            [pscustomobject]@{ Name = 'Verbose' }
+        )
+
+        $names = @(global:FilterOutCommonParams -Params $params | Select-Object -ExpandProperty Name)
+
+        $names | Should -HaveCount 1
+        $names | Should -Contain 'Name'
+    }
+
+    It 'treats PlatyPS placeholders as incomplete help text' {
+        Test-MeaningfulHelpText '{{ Fill in the Synopsis }}' | Should -BeFalse
+        Test-MeaningfulHelpText 'PS C:\> {{ Add example code here }}' | Should -BeFalse
+        Test-MeaningfulHelpText 'Returns the configured MOTD.' | Should -BeTrue
+    }
+
+    It 'classifies command-name help links as local references and only absolute web URIs as network links' {
+        $localCommandLink = [pscustomobject]@{
+            linkText = 'Get-MOTD'
+            uri      = ''
+        }
+        $remoteLink = [pscustomobject]@{
+            linkText = 'Docs'
+            uri      = 'https://example.com/psmotd'
+        }
+        $relativeLink = [pscustomobject]@{
+            linkText = 'about_PSMotd'
+            uri      = 'about_PSMotd'
+        }
+
+        $localReference = ConvertTo-HelpLinkReference $localCommandLink
+        $localReference.Kind | Should -Be 'Local'
+        $localReference.Target | Should -Be 'Get-MOTD'
+
+        $remoteReference = ConvertTo-HelpLinkReference $remoteLink
+        $remoteReference.Kind | Should -Be 'Network'
+        $remoteReference.Target | Should -Be 'https://example.com/psmotd'
+
+        $relativeReference = ConvertTo-HelpLinkReference $relativeLink
+        $relativeReference.Kind | Should -Be 'Local'
+        $relativeReference.Target | Should -Be 'about_PSMotd'
+    }
+}
+
+
 Describe "Test help for <_.Name>" -ForEach $commands {
 
     BeforeDiscovery {
@@ -43,7 +161,9 @@ Describe "Test help for <_.Name>" -ForEach $commands {
         $commandHelp           = Get-Help $command.Name -ErrorAction SilentlyContinue
         $commandParameters     = global:FilterOutCommonParams -Params $command.ParameterSets.Parameters
         $commandParameterNames = $commandParameters.Name
-        $helpLinks             = $commandHelp.relatedLinks.navigationLink.uri
+        $helpLinks             = @($commandHelp.relatedLinks.navigationLink | ForEach-Object { ConvertTo-HelpLinkReference $_ } | Where-Object { $null -ne $_ })
+        $localHelpLinks        = @($helpLinks | Where-Object Kind -eq 'Local')
+        $networkHelpLinks      = @($helpLinks | Where-Object Kind -eq 'Network')
     }
 
     BeforeAll {
@@ -53,6 +173,9 @@ Describe "Test help for <_.Name>" -ForEach $commands {
         $commandHelp            = Get-Help $command.Name -ErrorAction SilentlyContinue
         $commandParameters      = global:FilterOutCommonParams -Params $command.ParameterSets.Parameters
         $commandParameterNames  = $commandParameters.Name
+        $helpLinks              = @($commandHelp.relatedLinks.navigationLink | ForEach-Object { ConvertTo-HelpLinkReference $_ } | Where-Object { $null -ne $_ })
+        $localHelpLinks         = @($helpLinks | Where-Object Kind -eq 'Local')
+        $networkHelpLinks       = @($helpLinks | Where-Object Kind -eq 'Network')
         $helpParameters         = global:FilterOutCommonParams -Params $commandHelp.Parameters.Parameter
         $helpParameterNames     = $helpParameters.Name
     }
@@ -62,23 +185,34 @@ Describe "Test help for <_.Name>" -ForEach $commands {
         $commandHelp.Synopsis | Should -Not -BeLike '*`[`<CommonParameters`>`]*'
     }
 
+    It 'Has real synopsis' -Tag 'HelpContent' {
+        Test-MeaningfulHelpText (ConvertTo-HelpText $commandHelp.Synopsis) | Should -BeTrue
+    }
+
     # Should be a description for every function
-    It "Has description" {
-        $commandHelp.Description | Should -Not -BeNullOrEmpty
+    It 'Has description' -Tag 'HelpContent' {
+        Test-MeaningfulHelpText (ConvertTo-HelpText $commandHelp.Description) | Should -BeTrue
     }
 
     # Should be at least one example
-    It "Has example code" {
-        ($commandHelp.Examples.Example | Select-Object -First 1).Code | Should -Not -BeNullOrEmpty
+    It 'Has example code' -Tag 'HelpContent' {
+        Test-MeaningfulHelpText (ConvertTo-HelpText (($commandHelp.Examples.Example | Select-Object -First 1).Code)) | Should -BeTrue
     }
 
     # Should be at least one example description
-    It "Has example help" {
-        ($commandHelp.Examples.Example.Remarks | Select-Object -First 1).Text | Should -Not -BeNullOrEmpty
+    It 'Has example help' -Tag 'HelpContent' {
+        Test-MeaningfulHelpText (ConvertTo-HelpText (($commandHelp.Examples.Example | Select-Object -First 1).Remarks)) | Should -BeTrue
     }
 
-    It "Help link <_> is valid" -ForEach $helpLinks {
-        (Invoke-WebRequest -Uri $_ -UseBasicParsing).StatusCode | Should -Be '200'
+    It 'Help link <_.Target> resolves locally' -ForEach $localHelpLinks {
+        $resolvedHelp = Get-Help $_.Target -ErrorAction SilentlyContinue
+
+        $resolvedHelp | Should -Not -BeNullOrEmpty
+        $resolvedHelp.Name | Should -Be $_.Target
+    }
+
+    It 'Help link <_.Target> is valid' -Tag 'HelpNetwork' -ForEach $networkHelpLinks {
+        (Invoke-WebRequest -Uri $_.Target -UseBasicParsing).StatusCode | Should -Be 200
     }
 
     Context "Parameter <_.Name>" -Foreach $commandParameters {
@@ -91,8 +225,8 @@ Describe "Test help for <_.Name>" -ForEach $commands {
         }
 
         # Should be a description for every parameter
-        It "Has description" {
-            $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty
+        It 'Has description' -Tag 'HelpContent' {
+            Test-MeaningfulHelpText (ConvertTo-HelpText $parameterHelp.Description) | Should -BeTrue
         }
 
         # Required value in Help should match IsMandatory property of parameter
@@ -110,8 +244,8 @@ Describe "Test help for <_.Name>" -ForEach $commands {
     Context "Test <_> help parameter help for <commandName>" -Foreach $helpParameterNames {
 
         # Shouldn't find extra parameters in help.
-        It "finds help parameter in code: <_>" {
-            $_ -in $parameterNames | Should -Be $true
+        It 'finds help parameter in code: <_>' {
+            $_ -in $commandParameterNames | Should -Be $true
         }
     }
 }

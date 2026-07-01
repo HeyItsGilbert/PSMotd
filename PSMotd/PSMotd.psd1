@@ -12,7 +12,7 @@
     RootModule = 'PSMotd.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.2.0'
+    ModuleVersion = '1.0.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -24,7 +24,7 @@
     Author = 'Gilbert Sanchez'
 
     # Company or vendor of this module
-    CompanyName = 'Unknown'
+    CompanyName = 'PSMOTD'
 
     # Copyright statement for this module
     Copyright = '(c) Gilbert Sanchez. All rights reserved.'
@@ -74,7 +74,7 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @()
+    FunctionsToExport = @('Get-DefaultMessageOfTheDay', 'Get-MOTD', 'Get-MOTDConfig', 'Set-MOTDConfig')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
@@ -100,19 +100,19 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags = @('PowerShell', 'Profile', 'Prompt', 'MOTD')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/HeyItsGilbert/PSMotd/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/HeyItsGilbert/PSMotd'
 
             # A URL to an icon representing this module.
             # IconUri = ''
 
             # ReleaseNotes of this module
-            # ReleaseNotes = ''
+            ReleaseNotes = 'Harden MOTD rendering, persistence, help, and CI.'
 
             # Prerelease string of this module
             # Prerelease = ''

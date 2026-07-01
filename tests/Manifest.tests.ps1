@@ -15,12 +15,9 @@ BeforeAll {
     $changelogPath    = Join-Path -Path $env:BHProjectPath -Child 'CHANGELOG.md'
     $changelogVersion = Get-Content $changelogPath | ForEach-Object {
         if ($_ -match $changelogTagMatchRegEx) {
-            $changelogVersion = $matches.Version
-            break
+            $matches.Version
         }
-    }
-
-    $script:manifest    = $null
+    } | Select-Object -First 1
 }
 Describe 'Module manifest' {
 

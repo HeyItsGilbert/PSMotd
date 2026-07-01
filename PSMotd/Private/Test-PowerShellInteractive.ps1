@@ -1,3 +1,7 @@
+<#
+.SYNOPSIS
+Determines whether the current PowerShell session is interactive enough for automatic MOTD output.
+#>
 function Test-PowerShellInteractive {
     [CmdletBinding()]
     [OutputType([bool])]

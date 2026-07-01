@@ -2,58 +2,71 @@
 
 ## about_PSMotd
 
-```
-ABOUT TOPIC NOTE:
-The first header of the about topic should be the topic name.
-The second header contains the lookup name used by the help system.
-
-IE:
-# Some Help Topic Name
-## SomeHelpTopicFileName
-
-This will be transformed into the text file
-as `about_SomeHelpTopicFileName`.
-Do not include file extensions.
-The second header should have no spaces.
-```
-
 # SHORT DESCRIPTION
-{{ Short Description Placeholder }}
 
-```
-ABOUT TOPIC NOTE:
-About topics can be no longer than 80 characters wide when rendered to text.
-Any topics greater than 80 characters will be automatically wrapped.
-The generated about topic will be encoded UTF-8.
-```
+PSMotd shows a message of the day in your PowerShell profile on the cadence you choose.
 
 # LONG DESCRIPTION
-{{ Long Description Placeholder }}
 
-## Optional Subtopics
-{{ Optional Subtopic Placeholder }}
+PSMotd is a small profile helper for people who want useful startup information
+without turning every shell launch into noise.
+
+The module does two separate jobs:
+
+- It decides when a message of the day is due.
+- It renders the content for that message.
+
+Cadence is stored through the Configuration module. Use Set-MOTDConfig to pick
+Never, EverySession, Daily, or Weekly. The default scope is User.
+
+Content comes from your profile. If you define a Get-MessageOfTheDay function in
+your PowerShell profile, PSMotd runs that function when a message is due.
+If you do not define one, PSMotd falls back to the built-in banner from
+Get-DefaultMessageOfTheDay.
+
+The built-in banner is intentionally simple. It shows the current machine, the
+current user, and the current date. It exists as a safe fallback, not as the
+main customization surface.
 
 # EXAMPLES
-{{ Code or descriptive examples of how to leverage the functions described. }}
+
+```powershell
+Import-Module PSMotd
+Set-MOTDConfig -Frequency Daily
+Get-MOTD
+```
+
+Shows the message of the day at most once per calendar day.
+
+```powershell
+function Get-MessageOfTheDay {
+    "Today's focus: ship the boring fix first."
+}
+
+Import-Module PSMotd
+Get-MOTD -Now
+```
+
+Uses your profile-defined Get-MessageOfTheDay function and renders it
+immediately.
 
 # NOTE
-{{ Note Placeholder - Additional information that a user needs to know.}}
 
-# TROUBLESHOOTING NOTE
-{{ Troubleshooting Placeholder - Warns users of bugs}}
-
-{{ Explains behavior that is likely to change with fixes }}
+Set-MOTDConfig controls when a message is shown. It does not store or execute
+custom message content.
 
 # SEE ALSO
-{{ See also placeholder }}
 
-{{ You can also list related articles, blogs, and video URLs. }}
+- Get-MOTD
+- Get-MOTDConfig
+- Set-MOTDConfig
+- Get-DefaultMessageOfTheDay
 
 # KEYWORDS
-{{List alternate names or titles for this topic that readers might use.}}
 
-- {{ Keyword Placeholder }}
-- {{ Keyword Placeholder }}
-- {{ Keyword Placeholder }}
-- {{ Keyword Placeholder }}
+- PSMotd
+- PowerShell profile
+- message of the day
+- MOTD
+
 
