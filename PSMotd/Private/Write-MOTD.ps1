@@ -1,13 +1,13 @@
+<#
+.SYNOPSIS
+Renders the profile-defined MOTD content or the built-in fallback banner.
+#>
 function Write-MOTD {
     [CmdletBinding()]
-    [OutputType([void])]
+    [OutputType([object])]
     Param()
-    $config = Get-MOTDConfig
-
     if (Test-Path Function:\Get-MessageOfTheDay) {
         Get-MessageOfTheDay
-    } elseif ($config.MOTDScriptBlock) {
-        $config.MOTDScriptBlock.Invoke()
     } else {
         Get-DefaultMessageOfTheDay
     }

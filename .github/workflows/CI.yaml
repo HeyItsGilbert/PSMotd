@@ -1,16 +1,16 @@
 name: CI
-on: [push, pull_request]
-jobs:
-  test:
-    name: Run Tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-    steps:
-    - uses: actions/checkout@v1
-    - name: Test
-      shell: pwsh
-      run: ./build.ps1 -Task Test -Bootstrap
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      skipWindowsPowerShell:
+        description: 'Skip Windows PowerShell 5.1 tests (use for pwsh 7-only modules)'
+        type: boolean
+        default: false
 
+jobs:
+  ci:
+    uses: HeyItsGilbert/.github/.github/workflows/ModuleCI.yml@main
+    with:
+      skipWindowsPowerShell: ${{ github.event_name == 'workflow_dispatch' && inputs.skipWindowsPowerShell || false }}

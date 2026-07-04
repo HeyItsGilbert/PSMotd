@@ -1,12 +1,23 @@
 # PSMotd
 
+<center><img src="https://raw.githubusercontent.com/HeyItsGilbert/PSMotd/main/static/icon.png" /></center>
+
 A Message of the Day (MOTD) for your PowerShell profile.
 
 ## Overview
 
-This module allows you to write a function in your profile and call it a cadence
-that you prefer. This is commonly something you want on first login or maybe
-once a day.
+PSMotd lets you decide when a message of the day should show up and lets your
+profile decide what it says.
+
+Define `Get-MessageOfTheDay` in your PowerShell profile for custom content. If
+you do not define one, PSMotd falls back to the built-in banner.
+
+Automatic cadence values are:
+
+- `Never`
+- `EverySession`
+- `Daily`
+- `Weekly`
 
 ## Installation
 
@@ -14,41 +25,73 @@ once a day.
 Install-Module PSMotd
 ```
 
-## Examples
+PSMotd depends on the `Configuration` module. Installing from the PowerShell
+Gallery pulls required modules automatically. If you copy the source module into
+your profile by hand, make sure `Configuration` 1.6.0 is available too.
 
-An example of printing weather alerts in CA by defining a function called
-`Get-MessageOfTheDay`. When the module is loaded it will determine if it should
-run the function in your prompt.
+## Profile setup
+
+Add this to your profile:
+
+```powershell
+Import-Module PSMotd
+Get-MOTD
+```
+
+## Custom content
+
+Define `Get-MessageOfTheDay` in your profile to supply your own content:
 
 ```powershell
 function Get-MessageOfTheDay {
-  $weatherAlerts = Invoke-RestMethod "https://api.weather.gov/alerts/active?area=CA"
-  if($weatherAlerts.features){
-    Write-Host "Weather Alerts in California 🌤️"
-    $weatherAlerts.Features | ForEach-Object{
-        Write-Host "== $($_.headline) =="
-        Write-Host "Severity: $($_.severity)"
-        Write-Host "Description: $($_.description)"
+    $weatherAlerts = Invoke-RestMethod 'https://api.weather.gov/alerts/active?area=CA'
+    if ($weatherAlerts.Features) {
+        'Weather alerts in California'
+        $weatherAlerts.Features | ForEach-Object {
+            "== $($_.properties.headline) =="
+            "Severity: $($_.properties.severity)"
+            $_.properties.description
+        }
     }
-  }
 }
-Import-Module PSMotd
-Get-Motd
 ```
 
-By default the MOTD will be print once a day. You can set your environment
-variable to any of the following: 'Never', 'EverySession', 'Daily', 'Weekly'
+PSMotd checks for `Get-MessageOfTheDay` first. If it is not present, the module
+returns the built-in banner from `Get-DefaultMessageOfTheDay`.
 
 ## Configuration
 
-Configurations can be seen via `Get-MOTDConfig` and updated with
-`Set-MOTDConfig`.
-
-You can set your MOTD frequency by running:
+Inspect the current cadence settings with `Get-MOTDConfig`:
 
 ```powershell
+PS C:\> Get-MOTDConfig
 
+Name                           Value
+----                           -----
+MOTDFrequency                  Daily
+LastMOTDWrite                  2024-01-01T00:00:00.0000000
 ```
+
+Set your preferred cadence with `Set-MOTDConfig`:
+
+```powershell
+Set-MOTDConfig -Frequency Daily
+```
+
+Stop automatic output entirely:
+
+```powershell
+Set-MOTDConfig -Frequency Never
+```
+
+Render the MOTD immediately without waiting for the cadence window:
+
+```powershell
+Get-MOTD -Now
+```
+
+`Set-MOTDConfig` controls when a MOTD is shown. It does not store or execute
+custom message content.
 
 ## Shout Out
 

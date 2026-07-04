@@ -7,10 +7,7 @@
     }
     # Dev Dependancies
     'Pester' = @{
-        Version = '5.6.1'
-        Parameters = @{
-            SkipPublisherCheck = $true
-        }
+        Version = '5.8.0'
     }
     'psake' = @{
         Version = '4.9.0'

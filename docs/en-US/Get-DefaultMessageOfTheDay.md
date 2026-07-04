@@ -8,54 +8,46 @@ schema: 2.0.0
 # Get-DefaultMessageOfTheDay
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Returns the built-in PSMotd banner.
 
 ## SYNTAX
 
 ```
-Get-DefaultMessageOfTheDay [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-DefaultMessageOfTheDay [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Get-DefaultMessageOfTheDay returns the fallback banner that PSMotd uses when no
+Get-MessageOfTheDay function exists in the user's PowerShell profile.
+The
+banner includes the current machine, user, and date, and it uses the host width
+when it is available.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+PS C:\> Get-DefaultMessageOfTheDay
 ```
 
-{{ Add example description here }}
+Returns the default PSMotd banner as a string.
 
 ## PARAMETERS
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
 ### System.String
-
 ## NOTES
 
 ## RELATED LINKS
+
+[Get-MOTD]()
+
+
+

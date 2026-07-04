@@ -1,8 +1,16 @@
+<#
+.SYNOPSIS
+Persists the timestamp for the last successfully rendered MOTD.
+#>
 function Write-LastMOTDDate {
     [CmdletBinding()]
     [OutputType([void])]
-    Param()
+    Param(
+        [datetime]
+        $Timestamp = [datetime]::Now
+    )
 
-    Write-Verbose "Updating the MOTD timestamp to $([datetime]::Now)"
-    @{LastMOTDWrite = [datetime]::Now } | Export-Configuration -Scope 'User' -Name 'PSMOTD' -CompanyName 'PSMOTD'
+    $config = Get-MOTDConfig
+    $config.LastMOTDWrite = $Timestamp.ToString('o', [System.Globalization.CultureInfo]::InvariantCulture)
+    $config | Save-MOTDConfig
 }
