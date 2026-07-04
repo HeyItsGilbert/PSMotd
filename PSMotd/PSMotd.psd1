@@ -74,7 +74,8 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-DefaultMessageOfTheDay', 'Get-MOTD', 'Get-MOTDConfig', 'Set-MOTDConfig')
+    # Note: This is auto filled by the module build process.
+    FunctionsToExport = @()
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
@@ -112,7 +113,7 @@
             IconUri = 'https://raw.githubusercontent.com/HeyItsGilbert/PSMotd/main/static/icon.png'
 
             # ReleaseNotes of this module
-            ReleaseNotes = 'Harden MOTD rendering, persistence, help, and CI.'
+            ReleaseNotes = 'https://github.com/HeyItsGilbert/PSMotd/blob/main/CHANGELOG.md'
 
             # Prerelease string of this module
             # Prerelease = ''
