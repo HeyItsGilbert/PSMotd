@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/en-US/Get-DefaultMessageOfTheDay/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/en-US/Get-MOTD/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/en-US/Get-MOTDConfig/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/en-US/Set-MOTDConfig/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://heyitsgilbert.github.io/PSMotd/en-US/about_PSMotd.help/</loc>
+         <lastmod>2026-07-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
