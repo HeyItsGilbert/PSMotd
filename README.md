@@ -1,5 +1,7 @@
 # PSMotd
 
+<center><img src="https://raw.githubusercontent.com/HeyItsGilbert/PSMotd/main/static/icon.png" /></center>
+
 A Message of the Day (MOTD) for your PowerShell profile.
 
 ## Overview

@@ -109,7 +109,7 @@
             ProjectUri = 'https://github.com/HeyItsGilbert/PSMotd'
 
             # A URL to an icon representing this module.
-            # IconUri = ''
+            IconUri = 'https://raw.githubusercontent.com/HeyItsGilbert/PSMotd/main/static/icon.png'
 
             # ReleaseNotes of this module
             ReleaseNotes = 'Harden MOTD rendering, persistence, help, and CI.'
